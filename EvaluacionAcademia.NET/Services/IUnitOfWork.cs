@@ -1,10 +1,12 @@
-﻿namespace EvaluacionAcademia.NET.Services
+﻿using EvaluacionAcademia.NET.DataAccess.Repositories;
+
+namespace EvaluacionAcademia.NET.Services
 {
 	public interface IUnitOfWork
 	{
 		//public UserRepository UserRepository { get; }
 
-		//public ServiceRepository ServiceRepository { get; }
+		public AccountFiduciaryRepository AccountFiduciaryRepository { get; }
 
 		//public ProjectRepository ProjectRepository { get; }
 

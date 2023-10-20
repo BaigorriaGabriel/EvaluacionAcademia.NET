@@ -1,4 +1,5 @@
 using EvaluacionAcademia.NET.DataAccess;
+using EvaluacionAcademia.NET.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace EvaluacionAcademia.NET
@@ -20,6 +21,8 @@ namespace EvaluacionAcademia.NET
 			{
 				options.UseSqlServer("name=DefaultConnection");
 			});
+
+			builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 			var app = builder.Build();
 

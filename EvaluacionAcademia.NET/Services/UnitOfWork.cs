@@ -1,25 +1,28 @@
-﻿namespace EvaluacionAcademia.NET.Services
+﻿using EvaluacionAcademia.NET.DataAccess;
+using EvaluacionAcademia.NET.DataAccess.Repositories;
+
+namespace EvaluacionAcademia.NET.Services
 {
-	public class UnitOfWork //: IUnitOfWork
+	public class UnitOfWork : IUnitOfWork
 	{
-		//private readonly ApplicationDbContext _context;
+		private readonly ApplicationDbContext _context;
 		//public UserRepository UserRepository { get; private set; }
-		//public ServiceRepository ServiceRepository { get; private set; }
+		public AccountFiduciaryRepository AccountFiduciaryRepository { get; private set; }
 		//public ProjectRepository ProjectRepository { get; private set; }
 		//public JobRepository JobRepository { get; private set; }
 
-		//public UnitOfWorkService(ApplicationDbContext context)
-		//{
-		//	_context = context;
-		//	UserRepository = new UserRepository(_context);
-		//	ServiceRepository = new ServiceRepository(_context);
+		public UnitOfWork(ApplicationDbContext context)
+		{
+			_context = context;
+			//	UserRepository = new UserRepository(_context);
+			AccountFiduciaryRepository = new AccountFiduciaryRepository(_context);
 		//	ProjectRepository = new ProjectRepository(_context);
 		//	JobRepository = new JobRepository(_context);
-		//}
-		//public Task<int> Complete()
-		//{
-		//	return _context.SaveChangesAsync();
-		//}
+		}
+		public Task<int> Complete()
+		{
+			return _context.SaveChangesAsync();
+		}
 
 		//public void Dispose()
 		//{
