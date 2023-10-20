@@ -7,6 +7,7 @@ namespace EvaluacionAcademia.NET.Services
 		//public UserRepository UserRepository { get; }
 
 		public AccountFiduciaryRepository AccountFiduciaryRepository { get; }
+		public AccountCriptoRepository AccountCriptoRepository { get; }
 
 		//public ProjectRepository ProjectRepository { get; }
 

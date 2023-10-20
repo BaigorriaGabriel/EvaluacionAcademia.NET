@@ -8,6 +8,7 @@ namespace EvaluacionAcademia.NET.Services
 		private readonly ApplicationDbContext _context;
 		//public UserRepository UserRepository { get; private set; }
 		public AccountFiduciaryRepository AccountFiduciaryRepository { get; private set; }
+		public AccountCriptoRepository AccountCriptoRepository { get; private set; }
 		//public ProjectRepository ProjectRepository { get; private set; }
 		//public JobRepository JobRepository { get; private set; }
 
@@ -16,6 +17,7 @@ namespace EvaluacionAcademia.NET.Services
 			_context = context;
 			//	UserRepository = new UserRepository(_context);
 			AccountFiduciaryRepository = new AccountFiduciaryRepository(_context);
+			AccountCriptoRepository = new AccountCriptoRepository(_context);
 		//	ProjectRepository = new ProjectRepository(_context);
 		//	JobRepository = new JobRepository(_context);
 		}
