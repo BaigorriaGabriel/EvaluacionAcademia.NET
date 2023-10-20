@@ -1,3 +1,6 @@
+using EvaluacionAcademia.NET.DataAccess;
+using Microsoft.EntityFrameworkCore;
+
 namespace EvaluacionAcademia.NET
 {
 	public class Program
@@ -12,6 +15,11 @@ namespace EvaluacionAcademia.NET
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 			builder.Services.AddEndpointsApiExplorer();
 			builder.Services.AddSwaggerGen();
+
+			builder.Services.AddDbContext<ApplicationDbContext>(options =>
+			{
+				options.UseSqlServer("name=DefaultConnection");
+			});
 
 			var app = builder.Build();
 
