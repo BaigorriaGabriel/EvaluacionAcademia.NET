@@ -9,7 +9,7 @@ namespace EvaluacionAcademia.NET.Services
 		public AccountFiduciaryRepository AccountFiduciaryRepository { get; }
 		public AccountCriptoRepository AccountCriptoRepository { get; }
 
-		//public ProjectRepository ProjectRepository { get; }
+		public UserRepository UserRepository { get; }
 
 		//public JobRepository JobRepository { get; }
 

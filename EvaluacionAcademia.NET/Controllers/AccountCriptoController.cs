@@ -18,13 +18,13 @@ namespace EvaluacionAcademia.NET.Controllers
 
 
 		[HttpGet("GetBalance")]
-		//[Authorize]
+		[Authorize]
 		public async Task<IActionResult> GetBalance(int idAccount) 
 		{
 			var saldo = await _unitOfWork.AccountCriptoRepository.GetBalance(idAccount);
 
-			//return ResponseFactory.CreateSuccessResponse(200, saldo);
-			return Ok(saldo);
+			return ResponseFactory.CreateSuccessResponse(200, saldo);
+			//return Ok(saldo);
 
 		}
 
