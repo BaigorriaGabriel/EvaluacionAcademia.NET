@@ -11,7 +11,7 @@ namespace EvaluacionAcademia.NET.Services
 
 		public UserRepository UserRepository { get; }
 
-		//public JobRepository JobRepository { get; }
+		public AccountRepository AccountRepository { get; }
 
 		Task<int> Complete();
 	}

@@ -10,7 +10,7 @@ namespace EvaluacionAcademia.NET.Services
 		public AccountFiduciaryRepository AccountFiduciaryRepository { get; private set; }
 		public AccountCriptoRepository AccountCriptoRepository { get; private set; }
 		public UserRepository UserRepository { get; private set; }
-		//public JobRepository JobRepository { get; private set; }
+		public AccountRepository AccountRepository { get; private set; }
 
 		public UnitOfWork(ApplicationDbContext context)
 		{
@@ -19,7 +19,7 @@ namespace EvaluacionAcademia.NET.Services
 			AccountFiduciaryRepository = new AccountFiduciaryRepository(_context);
 			AccountCriptoRepository = new AccountCriptoRepository(_context);
 			UserRepository = new UserRepository(_context);
-		//	JobRepository = new JobRepository(_context);
+			AccountRepository = new AccountRepository(_context);
 		}
 		public Task<int> Complete()
 		{

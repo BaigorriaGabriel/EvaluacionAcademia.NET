@@ -16,5 +16,10 @@ namespace EvaluacionAcademia.NET.DataAccess.Repositories
 			//return await _context.Users.Include(x => x.Role).SingleOrDefaultAsync(x => (x.Email == dto.Email && x.Password == PasswordEncryptHelper.EncryptPassword(dto.Password, dto.Email)) && x.IsActive == true);
 			return await _context.Users.SingleOrDefaultAsync(x => (x.Email == dto.Email && x.Password == dto.Password) && x.IsActive == true);
 		}
+
+		public async Task<bool> UserExById(int id)
+		{
+			return await _context.Users.AnyAsync(x => x.CodUser == id);
+		}
 	}
 }
