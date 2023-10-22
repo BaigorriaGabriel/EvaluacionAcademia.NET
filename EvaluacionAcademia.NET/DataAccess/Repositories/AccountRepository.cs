@@ -12,6 +12,12 @@ namespace EvaluacionAcademia.NET.DataAccess.Repositories
 
 		}
 
+
+		public override async Task<List<Account>> GetAllActive()
+		{
+			return await _context.Accounts.Where(s => s.IsActive == true).ToListAsync();
+		}
+
 		public async Task<Account> GetAccountByType(int codUser, string type)
 		{
 			var account = await _context.Accounts.FirstOrDefaultAsync(x => x.CodUser == codUser && x.Type== type);

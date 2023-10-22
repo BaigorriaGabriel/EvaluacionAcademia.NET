@@ -17,6 +17,25 @@ namespace EvaluacionAcademia.NET.Controllers
 			_unitOfWork = unitOfWork;
 		}
 
+		[HttpGet("GetAllActive")]
+		[Authorize]
+		public async Task<IActionResult> GetAllActive() //(int pageToShow = 1)
+		{
+			//int pageToShow = 1;
+
+			var acounts = await _unitOfWork.AccountRepository.GetAllActive();
+
+			//if (Request.Query.ContainsKey("page")) { int.TryParse(Request.Query["page"], out pageToShow); }
+
+			//var url = new Uri($"{Request.Scheme}://{Request.Host}{Request.Path}").ToString();
+
+			//var paginateUsers = PaginateHelper.Paginate(users, pageToShow, url);
+
+			//return ResponseFactory.CreateSuccessResponse(200, paginateUsers);
+			return ResponseFactory.CreateSuccessResponse(200, acounts);
+
+		}
+
 		[HttpGet("GetAccountByType")]
 		[Authorize]
 		public async Task<IActionResult> GetAccountByType(int codUser, int type)

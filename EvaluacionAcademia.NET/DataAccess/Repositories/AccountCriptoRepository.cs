@@ -12,6 +12,12 @@ namespace EvaluacionAcademia.NET.DataAccess.Repositories
 
 		}
 
+		public override async Task<List<AccountCripto>> GetAllActive()
+		{
+			//return await _context.CriptoAccounts.Where(s => s.IsActive == true).ToListAsync();
+			return await _context.CriptoAccounts.Include(account => account.User).Where(account => account.IsActive == true).ToListAsync();
+		}
+
 		public async Task<float> GetBalance(int accountId)
 		{
 			var account = await _context.Accounts.OfType<AccountCripto>().FirstOrDefaultAsync(a => a.CodAccount == accountId);

@@ -12,6 +12,12 @@ namespace EvaluacionAcademia.NET.DataAccess.Repositories
 
 		}
 
+		public override async Task<List<AccountFiduciary>> GetAllActive()
+		{
+			//return await _context.FiduciaryAccounts.Where(s => s.IsActive == true).ToListAsync();
+			return await _context.FiduciaryAccounts.Include(account => account.User).Where(account => account.IsActive == true).ToListAsync();
+		}
+
 		public async Task<float> GetBalancePeso(int accountId)
 		{
 			var account = await _context.Accounts.OfType<AccountFiduciary>().FirstOrDefaultAsync(a => a.CodAccount == accountId);

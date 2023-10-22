@@ -11,6 +11,8 @@ namespace EvaluacionAcademia.NET.DataAccess.Repositories
 		{
 		}
 
+
+
 		public async Task<User?> AuthenticateCredentials(AuthenticateDto dto)
 		{
 			//return await _context.Users.Include(x => x.Role).SingleOrDefaultAsync(x => (x.Email == dto.Email && x.Password == PasswordEncryptHelper.EncryptPassword(dto.Password, dto.Email)) && x.IsActive == true);
