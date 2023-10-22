@@ -1,11 +1,26 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using EvaluacionAcademia.NET.DTOs;
 
 namespace EvaluacionAcademia.NET.Entities
 {
 	public class User
 	{
+        public User()
+        {
+            
+        }
+
+		public User(RegisterDto dto)
+		{
+			Name = dto.Name;
+			Dni = dto.Dni;
+			Email = dto.Email;
+			Password = dto.Password; //PasswordEncryptHelper.EncryptPassword(dto.Password, dto.Email);
+			IsActive = true;
+		}
+
 		[Key]
 		[Column("codUser")]
 		public int CodUser { get; set; }

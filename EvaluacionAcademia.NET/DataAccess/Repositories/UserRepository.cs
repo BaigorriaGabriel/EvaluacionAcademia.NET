@@ -21,5 +21,12 @@ namespace EvaluacionAcademia.NET.DataAccess.Repositories
 		{
 			return await _context.Users.AnyAsync(x => x.CodUser == id);
 		}
+
+		public async Task<bool> UserExByMail(string email)
+		{
+			return await _context.Users.AnyAsync(x => x.Email == email);
+		}
+
+
 	}
 }

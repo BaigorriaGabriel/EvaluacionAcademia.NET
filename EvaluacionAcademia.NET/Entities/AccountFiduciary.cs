@@ -1,13 +1,32 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using EvaluacionAcademia.NET.DTOs;
 
 namespace EvaluacionAcademia.NET.Entities
 {
 	[Table("Accounts")]
 	public class AccountFiduciary : Account
 	{
-		[Required]
+
+        public AccountFiduciary()
+        {
+            
+        }
+
+        public AccountFiduciary(AccountFiduciaryDto dto)
+        {
+			Type = "Fiduciary";
+			CodUser = dto.CodUser;
+			IsActive = true;
+			CBU= dto.CBU;
+			Alias = dto.Alias;
+			AccountNumber = dto.AccountNumber;
+			BalancePeso = dto.BalancePeso;
+			BalanceUsd = dto.BalanceUsd;
+		}
+
+        [Required]
 		[Column("CBU", TypeName = "VARCHAR(250)")]
 		public string CBU { get; set; }
 

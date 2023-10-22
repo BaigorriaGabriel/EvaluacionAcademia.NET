@@ -35,5 +35,15 @@ namespace EvaluacionAcademia.NET.DataAccess.Repositories
 
 			return 0;
 		}
+
+		public async Task<bool> AccountExByCBU(string CBU)
+		{
+			return await _context.FiduciaryAccounts.AnyAsync(x => x.CBU == CBU);
+		}
+
+		public async Task<bool> AccountExByAlias(string Alias)
+		{
+			return await _context.FiduciaryAccounts.AnyAsync(x => x.Alias == Alias);
+		}
 	}
 }
