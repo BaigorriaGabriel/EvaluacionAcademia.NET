@@ -1,4 +1,5 @@
 ﻿using EvaluacionAcademia.NET.DataAccess.Repositories.Interfaces;
+using EvaluacionAcademia.NET.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace EvaluacionAcademia.NET.DataAccess.Repositories
@@ -21,6 +22,16 @@ namespace EvaluacionAcademia.NET.DataAccess.Repositories
 		{
 			await _context.Set<T>().AddAsync(entity);
 			return true;
+		}
+
+		public virtual async Task<T> GetById(T entity)
+		{
+			return entity;
+
+		}
+		public virtual Task<bool> Delete(T entity)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

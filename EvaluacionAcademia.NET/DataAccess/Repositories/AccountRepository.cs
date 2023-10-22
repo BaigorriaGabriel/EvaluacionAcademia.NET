@@ -25,7 +25,28 @@ namespace EvaluacionAcademia.NET.DataAccess.Repositories
 			return account;
 		}
 
+		public async Task<bool> AccountExById(int id)
+		{
+			return await _context.Accounts.AnyAsync(x => x.CodAccount == id);
+		}
 
+		public override async Task<Account> GetById(Account AccountToGet)
+		{
+			var account = await _context.Accounts.FirstOrDefaultAsync(x => x.CodAccount == AccountToGet.CodAccount);
+
+			return account;
+		}
+
+		public override async Task<bool> Delete(Account deleteAccount)
+		{
+			var account = await _context.Accounts.FirstOrDefaultAsync(x => x.CodAccount == deleteAccount.CodAccount);
+			if (account == null) { return false; }
+
+			account.IsActive = false;
+
+			_context.Accounts.Update(account);
+			return true;
+		}
 
 	}
 }

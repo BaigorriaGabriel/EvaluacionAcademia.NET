@@ -21,6 +21,12 @@ namespace EvaluacionAcademia.NET.Entities
 			IsActive = true;
 		}
 
+		public User(int id)
+		{
+			CodUser = id;
+
+		}
+
 		[Key]
 		[Column("codUser")]
 		public int CodUser { get; set; }

@@ -54,5 +54,26 @@ namespace EvaluacionAcademia.NET.Controllers
 			return ResponseFactory.CreateErrorResponse(404, $"No existe ningun usuario con el Id: {codUser}");
 		}
 
+		[HttpDelete("Delete/{id}")]
+		[Authorize]
+		public async Task<IActionResult> Delete([FromRoute] int id)
+		{
+			if (await _unitOfWork.AccountRepository.AccountExById(id))
+			{
+				var account = await _unitOfWork.AccountRepository.GetById(new Account(id));
+				if (account.IsActive)
+				{
+					var result = await _unitOfWork.AccountRepository.Delete(new Account(id));
+					await _unitOfWork.Complete();
+					return ResponseFactory.CreateSuccessResponse(201, "Cuenta eliminada con exito!");
+				}
+				else
+				{
+					return ResponseFactory.CreateErrorResponse(409, $"La cuenta con Id: {id} ya se encuentra eliminada");
+				}
+			}
+			return ResponseFactory.CreateErrorResponse(404, $"No existe ninguna cuenta con el Id: {id}");
+		}
+
 	}
 }

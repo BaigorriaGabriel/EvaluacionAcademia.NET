@@ -7,7 +7,17 @@ namespace EvaluacionAcademia.NET.Entities
 	[Table("Accounts")]
 	public class Account
 	{
-		[Key]
+        public Account()
+        {
+            
+        }
+
+        public Account(int id)
+        {
+			CodAccount = id;
+        }
+
+        [Key]
 		[Column("codAccount")]
 		public int CodAccount { get; set; }
 

@@ -29,6 +29,23 @@ namespace EvaluacionAcademia.NET.DataAccess.Repositories
 			return await _context.Users.AnyAsync(x => x.Email == email);
 		}
 
+		public override async Task<User> GetById(User UserToGet)
+		{
+			var user = await _context.Users.FirstOrDefaultAsync(x => x.CodUser == UserToGet.CodUser);
+
+			return user;
+		}
+
+		public override async Task<bool> Delete(User deleteUser)
+		{
+			var user = await _context.Users.FirstOrDefaultAsync(x => x.CodUser == deleteUser.CodUser);
+			if (user == null) { return false; }
+
+			user.IsActive = false;
+
+			_context.Users.Update(user);
+			return true;
+		}
 
 	}
 }

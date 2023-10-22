@@ -51,5 +51,26 @@ namespace EvaluacionAcademia.NET.Controllers
 
 			return ResponseFactory.CreateSuccessResponse(201, "Usuario registrado con exito!");
 		}
+
+		[HttpDelete("Delete/{id}")]
+		[Authorize]
+		public async Task<IActionResult> Delete([FromRoute] int id)
+		{
+			if (await _unitOfWork.UserRepository.UserExById(id))
+			{
+				var user = await _unitOfWork.UserRepository.GetById(new User(id));
+				if (user.IsActive)
+				{
+					var result = await _unitOfWork.UserRepository.Delete(new User(id));
+					await _unitOfWork.Complete();
+					return ResponseFactory.CreateSuccessResponse(201, "Usuario eliminado con exito!");
+				}
+				else
+				{
+					return ResponseFactory.CreateErrorResponse(409, $"El Usuario con Id: {id} ya se encuentra eliminado");
+				}
+			}
+			return ResponseFactory.CreateErrorResponse(404, $"No existe ningun usuario con el Id: {id}");
+		}
 	}
 }
