@@ -74,5 +74,41 @@ namespace EvaluacionAcademia.NET.Controllers
 
 			return ResponseFactory.CreateSuccessResponse(201, "Cuenta fiduciaria registrada con exito!");
 		}
+
+		[HttpPut("Update/{id}")]
+		[Authorize]
+		public async Task<IActionResult> Update([FromRoute] int id, AccountFiduciaryDto dto)
+		{
+			if (await _unitOfWork.AccountFiduciaryRepository.AccountExById(id))
+			{
+
+				var existingAccount = await _unitOfWork.AccountFiduciaryRepository.GetByAlias(dto.Alias);
+
+				if (existingAccount != null && existingAccount.CodAccount != id)
+				{
+					return ResponseFactory.CreateErrorResponse(409, $"Ya existe una cuenta fiduciaria registrada con el Alias: {dto.Alias}");
+				}
+
+				existingAccount = await _unitOfWork.AccountFiduciaryRepository.GetByCBU(dto.CBU);
+
+				if (existingAccount != null && existingAccount.CodAccount != id)
+				{
+					return ResponseFactory.CreateErrorResponse(409, $"Ya existe una cuenta fiduciaria registrada con el CBU: {dto.CBU}");
+				}
+
+				existingAccount = await _unitOfWork.AccountFiduciaryRepository.GetByAccountNumber(dto.AccountNumber);
+
+				if (existingAccount != null && existingAccount.CodAccount != id)
+				{
+					return ResponseFactory.CreateErrorResponse(409, $"Ya existe una cuenta fiduciaria registrada con el numero de cuenta: {dto.AccountNumber}");
+				}
+
+				//if (dto.RoleId != 1 && dto.RoleId != 2) return ResponseFactory.CreateErrorResponse(409, $"RoleId Invalido");
+				var result = await _unitOfWork.AccountFiduciaryRepository.Update(new AccountFiduciary(dto, id));
+				await _unitOfWork.Complete();
+				return ResponseFactory.CreateSuccessResponse(201, "Cuenta fiduciaria actualizada con exito!");
+			}
+			return ResponseFactory.CreateErrorResponse(404, $"No existe ninguna Cuenta fiduciaria con el Id: {id}");
+		}
 	}
 }

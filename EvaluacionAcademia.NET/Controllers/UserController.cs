@@ -52,6 +52,26 @@ namespace EvaluacionAcademia.NET.Controllers
 			return ResponseFactory.CreateSuccessResponse(201, "Usuario registrado con exito!");
 		}
 
+		[HttpPut("Update/{id}")]
+		[Authorize]
+		public async Task<IActionResult> Update([FromRoute] int id, RegisterDto dto)
+		{
+			if (await _unitOfWork.UserRepository.UserExByMail(dto.Email))
+			{
+				var existingUser = await _unitOfWork.UserRepository.GetByEmail(dto.Email);
+
+				if (existingUser.CodUser != id)
+				{
+					return ResponseFactory.CreateErrorResponse(409, $"Ya existe un usuario registrado con el mail: {dto.Email}");
+				}
+				//if (dto.RoleId != 1 && dto.RoleId != 2) return ResponseFactory.CreateErrorResponse(409, $"RoleId Invalido");
+				var result = await _unitOfWork.UserRepository.Update(new User(dto, id));
+				await _unitOfWork.Complete();
+				return ResponseFactory.CreateSuccessResponse(201, "Usuario actualizado con exito!");
+			}
+			return ResponseFactory.CreateErrorResponse(404, $"No existe ningun usuario con el ID: {id}");
+		}
+
 		[HttpDelete("Delete/{id}")]
 		[Authorize]
 		public async Task<IActionResult> Delete([FromRoute] int id)

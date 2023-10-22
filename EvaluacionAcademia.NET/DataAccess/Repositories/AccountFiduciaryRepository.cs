@@ -51,5 +51,48 @@ namespace EvaluacionAcademia.NET.DataAccess.Repositories
 		{
 			return await _context.FiduciaryAccounts.AnyAsync(x => x.Alias == Alias);
 		}
+
+		public async Task<bool> AccountExById(int id)
+		{
+			return await _context.FiduciaryAccounts.AnyAsync(x => (x.CodAccount == id && x.Type == "Fiduciary"));
+		}
+
+		public override async Task<bool> Update(AccountFiduciary updateAccount)
+		{
+			var account = await _context.FiduciaryAccounts.FirstOrDefaultAsync(x => x.CodAccount == updateAccount.CodAccount);
+			if (account == null) { return false; }
+			account.Type = updateAccount.Type;
+			account.CodUser = updateAccount.CodUser;
+			account.IsActive = true;
+			account.CBU = updateAccount.CBU;
+			account.Alias = updateAccount.Alias;
+			account.AccountNumber = updateAccount.AccountNumber;
+			account.BalancePeso = updateAccount.BalancePeso;
+			account.BalanceUsd = updateAccount.BalanceUsd;
+
+			_context.FiduciaryAccounts.Update(account);
+			return true;
+		}
+
+		public async Task<AccountFiduciary> GetByAlias(string alias)
+		{
+			var account = await _context.FiduciaryAccounts.FirstOrDefaultAsync(x => x.Alias == alias);
+
+			return account;
+		}
+
+		public async Task<AccountFiduciary> GetByCBU(string CBU)
+		{
+			var account = await _context.FiduciaryAccounts.FirstOrDefaultAsync(x => x.CBU == CBU);
+
+			return account;
+		}
+
+		public async Task<AccountFiduciary> GetByAccountNumber(string accountNumber)
+		{
+			var account = await _context.FiduciaryAccounts.FirstOrDefaultAsync(x => x.AccountNumber == accountNumber);
+
+			return account;
+		}
 	}
 }

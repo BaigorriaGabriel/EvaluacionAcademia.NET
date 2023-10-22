@@ -63,6 +63,22 @@ namespace EvaluacionAcademia.NET.Controllers
 			return ResponseFactory.CreateSuccessResponse(201, "Cuenta cripto registrada con exito!");
 		}
 
+		[HttpPut("Update/{id}")]
+		[Authorize]
+		public async Task<IActionResult> Update([FromRoute] int id, AccountCriptoDto dto)
+		{
+			if (await _unitOfWork.AccountCriptoRepository.AccountExById(id))
+			{
+				var existingAccount = await _unitOfWork.AccountCriptoRepository.GetById(new AccountCripto(id));
+
+				//if (dto.RoleId != 1 && dto.RoleId != 2) return ResponseFactory.CreateErrorResponse(409, $"RoleId Invalido");
+				var result = await _unitOfWork.AccountCriptoRepository.Update(new AccountCripto(dto, id));
+				await _unitOfWork.Complete();
+				return ResponseFactory.CreateSuccessResponse(201, "Cuenta cripto actualizada con exito!");
+			}
+			return ResponseFactory.CreateErrorResponse(404, $"No existe ninguna Cuenta cripto con el Id: {id}");
+		}
+
 
 	}
 }

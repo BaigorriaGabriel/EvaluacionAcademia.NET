@@ -21,6 +21,17 @@ namespace EvaluacionAcademia.NET.Entities
 			IsActive = true;
 		}
 
+		public User(RegisterDto dto, int id)
+		{
+			CodUser = id;
+			Name = dto.Name;
+			Dni = dto.Dni;
+			Email = dto.Email;
+			//RoleId = dto.RoleId;
+			Password = dto.Password; //PasswordEncryptHelper.EncryptPassword(dto.Password, dto.Email);
+			IsActive = true;
+		}
+
 		public User(int id)
 		{
 			CodUser = id;

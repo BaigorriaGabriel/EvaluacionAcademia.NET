@@ -13,7 +13,22 @@ namespace EvaluacionAcademia.NET.Entities
             
         }
 
-        public AccountCripto(AccountCriptoDto dto)
+		public AccountCripto(int id)
+		{
+			CodAccount = id;
+		}
+
+		public AccountCripto(AccountCriptoDto dto , int id)
+		{
+			CodAccount = id;
+			Type = "Cripto";
+			CodUser = dto.CodUser;
+			IsActive = true;
+			DirectionUUID = dto.DirectionUUID;
+			BalanceBtc = dto.BalanceBtc;
+		}
+
+		public AccountCripto(AccountCriptoDto dto)
         {
             Type = "Cripto";
 			CodUser = dto.CodUser;

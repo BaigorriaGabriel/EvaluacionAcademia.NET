@@ -29,9 +29,18 @@ namespace EvaluacionAcademia.NET.DataAccess.Repositories
 			return entity;
 
 		}
+
+		
 		public virtual Task<bool> Delete(T entity)
 		{
 			throw new NotImplementedException();
 		}
+
+		public virtual Task<bool> Update(T entity)
+		{
+			throw new NotImplementedException();
+		}
+
+		
 	}
 }
