@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using EvaluacionAcademia.NET.DTOs;
+using EvaluacionAcademia.NET.Helper;
 
 namespace EvaluacionAcademia.NET.Entities
 {
@@ -17,7 +18,7 @@ namespace EvaluacionAcademia.NET.Entities
 			Name = dto.Name;
 			Dni = dto.Dni;
 			Email = dto.Email;
-			Password = dto.Password; //PasswordEncryptHelper.EncryptPassword(dto.Password, dto.Email);
+			Password = PasswordEncryptHelper.EncryptPassword(dto.Password, dto.Email);
 			IsActive = true;
 		}
 
@@ -28,7 +29,7 @@ namespace EvaluacionAcademia.NET.Entities
 			Dni = dto.Dni;
 			Email = dto.Email;
 			//RoleId = dto.RoleId;
-			Password = dto.Password; //PasswordEncryptHelper.EncryptPassword(dto.Password, dto.Email);
+			Password = PasswordEncryptHelper.EncryptPassword(dto.Password, dto.Email);
 			IsActive = true;
 		}
 
