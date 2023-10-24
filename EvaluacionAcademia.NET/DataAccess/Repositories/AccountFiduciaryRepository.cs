@@ -74,6 +74,13 @@ namespace EvaluacionAcademia.NET.DataAccess.Repositories
 			return true;
 		}
 
+		public override async Task<AccountFiduciary> GetById(AccountFiduciary accountFiduciary)
+		{
+			var account = await _context.FiduciaryAccounts.FirstOrDefaultAsync(x => x.CodAccount == accountFiduciary.CodAccount);
+
+			return account;
+		}
+
 		public async Task<AccountFiduciary> GetByAlias(string alias)
 		{
 			var account = await _context.FiduciaryAccounts.FirstOrDefaultAsync(x => x.Alias == alias);
