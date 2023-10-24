@@ -56,15 +56,16 @@ namespace EvaluacionAcademia.NET.Controllers
 		[Authorize]
 		public async Task<IActionResult> Update([FromRoute] int id, RegisterDto dto)
 		{
-			if (await _unitOfWork.UserRepository.UserExByMail(dto.Email))
+			if (await _unitOfWork.UserRepository.UserExById(id))
 			{
-				var existingUser = await _unitOfWork.UserRepository.GetByEmail(dto.Email);
-
-				if (existingUser.CodUser != id)
+				if (await _unitOfWork.UserRepository.UserExByMail(dto.Email))
 				{
-					return ResponseFactory.CreateErrorResponse(409, $"Ya existe un usuario registrado con el mail: {dto.Email}");
+					var existingUser = await _unitOfWork.UserRepository.GetByEmail(dto.Email);
+					if (existingUser.CodUser != id)
+					{
+						return ResponseFactory.CreateErrorResponse(409, $"Ya existe un usuario registrado con el mail: {dto.Email}");
+					}
 				}
-				//if (dto.RoleId != 1 && dto.RoleId != 2) return ResponseFactory.CreateErrorResponse(409, $"RoleId Invalido");
 				var result = await _unitOfWork.UserRepository.Update(new User(dto, id));
 				await _unitOfWork.Complete();
 				return ResponseFactory.CreateSuccessResponse(201, "Usuario actualizado con exito!");

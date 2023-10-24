@@ -11,10 +11,13 @@ namespace EvaluacionAcademia.NET.DataAccess
 
 		public DbSet<User> Users { get; set; }
 		public DbSet<Account> Accounts { get; set; } // Cambia el nombre de la propiedad a "Accounts" para que coincida con el DbSet.
+		public DbSet<Transaction> Transactions { get; set; } 
 
 		// Agrega los DbSet para las clases hijas
 		public DbSet<AccountFiduciary> FiduciaryAccounts { get; set; }
 		public DbSet<AccountCripto> CriptoAccounts { get; set; }
+		public DbSet<TransactionTransfer> TransactionTransfers { get; set; }
+		public DbSet<TransactionConversion> TransactionConversions { get; set; }
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -36,6 +39,14 @@ namespace EvaluacionAcademia.NET.DataAccess
 				.HasValue<Account>("Account")
 				.HasValue<AccountFiduciary>("Fiduciary")
 				.HasValue<AccountCripto>("Cripto");
+
+			modelBuilder.Entity<Transaction>()
+				.ToTable("Transactions")
+				.HasDiscriminator<string>("Type")
+				.HasValue<Transaction>("Transaction")
+				.HasValue<Transaction>("Deposit")
+				.HasValue<TransactionTransfer>("Transfer")
+				.HasValue<TransactionConversion>("Conversion");
 
 			base.OnModelCreating(modelBuilder);
 		}

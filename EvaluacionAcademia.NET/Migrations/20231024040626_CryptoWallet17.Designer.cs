@@ -4,6 +4,7 @@ using EvaluacionAcademia.NET.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EvaluacionAcademia.NET.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231024040626_CryptoWallet17")]
+    partial class CryptoWallet17
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -85,7 +87,7 @@ namespace EvaluacionAcademia.NET.Migrations
 
                     b.ToTable("Transactions", (string)null);
 
-                    b.HasDiscriminator<string>("Type").HasValue("Deposit");
+                    b.HasDiscriminator<string>("Type").HasValue("Transaction");
                 });
 
             modelBuilder.Entity("EvaluacionAcademia.NET.Entities.User", b =>
@@ -141,8 +143,8 @@ namespace EvaluacionAcademia.NET.Migrations
                 {
                     b.HasBaseType("EvaluacionAcademia.NET.Entities.Account");
 
-                    b.Property<decimal>("BalanceBtc")
-                        .HasColumnType("decimal(18,2)")
+                    b.Property<float>("BalanceBtc")
+                        .HasColumnType("real")
                         .HasColumnName("balanceBtc");
 
                     b.Property<string>("DirectionUUID")
@@ -161,7 +163,7 @@ namespace EvaluacionAcademia.NET.Migrations
                             CodUser = 1,
                             IsActive = true,
                             Type = "Cripto",
-                            BalanceBtc = 5m,
+                            BalanceBtc = 5f,
                             DirectionUUID = "asd123"
                         });
                 });
@@ -180,12 +182,12 @@ namespace EvaluacionAcademia.NET.Migrations
                         .HasColumnType("VARCHAR(50)")
                         .HasColumnName("alias");
 
-                    b.Property<decimal>("BalancePeso")
-                        .HasColumnType("decimal(18,2)")
+                    b.Property<float>("BalancePeso")
+                        .HasColumnType("real")
                         .HasColumnName("balancePeso");
 
-                    b.Property<decimal>("BalanceUsd")
-                        .HasColumnType("decimal(18,2)")
+                    b.Property<float>("BalanceUsd")
+                        .HasColumnType("real")
                         .HasColumnName("balanceUsd");
 
                     b.Property<string>("CBU")
@@ -206,8 +208,8 @@ namespace EvaluacionAcademia.NET.Migrations
                             Type = "Fiduciary",
                             AccountNumber = "123",
                             Alias = "gabriel.baigorria.cw",
-                            BalancePeso = 250m,
-                            BalanceUsd = 10m,
+                            BalancePeso = 250f,
+                            BalanceUsd = 10f,
                             CBU = "111111"
                         });
                 });

@@ -15,7 +15,25 @@ namespace EvaluacionAcademia.NET.DataAccess.Repositories
 
 		public override async Task<List<Account>> GetAllActive()
 		{
-			return await _context.Accounts.Where(s => s.IsActive == true).ToListAsync();
+			//return await _context.Accounts.Where(s => s.IsActive == true).ToListAsync();
+			var accounts = await _context.Accounts
+			.Include(a => a.User)
+			.Where(s => s.IsActive == true)// Si necesitas incluir información del usuario asociado a la cuenta.
+			.Select(a => new Account
+			{
+				CodAccount = a.CodAccount,
+				Type = a.Type,
+				CodUser = a.CodUser,
+				IsActive = a.IsActive,
+				// Agrega campos específicos de las clases hijas
+				_BalancePeso = (a is AccountFiduciary) ? ((AccountFiduciary)a).BalancePeso : 0,
+				_BalanceUsd = (a is AccountFiduciary) ? ((AccountFiduciary)a).BalanceUsd : 0,
+				_BalanceBtc = (a is AccountCripto) ? ((AccountCripto)a).BalanceBtc : 0,
+				_DireccionUUID = (a is AccountCripto) ? ((AccountCripto)a).DirectionUUID : null
+			})
+			.ToListAsync();
+
+			return accounts;
 		}
 
 		public async Task<Account> GetAccountByType(int codUser, string type)

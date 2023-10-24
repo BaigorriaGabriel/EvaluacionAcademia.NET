@@ -57,12 +57,12 @@ namespace EvaluacionAcademia.NET.Entities
 		public string AccountNumber { get; set; }
 
 		[Required]
-		[Column("balancePeso")]
-		public float BalancePeso { get; set; }
+		[Column("balancePeso", TypeName = "decimal(18, 2)")]
+		public decimal BalancePeso { get; set; }
 
 		[Required]
-		[Column("balanceUsd")]
-		public float BalanceUsd { get; set; }
+		[Column("balanceUsd", TypeName = "decimal(18, 2)")]
+		public decimal BalanceUsd { get; set; }
 
 		// Propiedades específicas de las cuentas fiduciarias
 	}

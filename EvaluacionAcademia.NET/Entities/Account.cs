@@ -34,5 +34,14 @@ namespace EvaluacionAcademia.NET.Entities
 		[Required]
 		[Column("isActive")]
 		public bool IsActive { get; set; }
+
+		[NotMapped]
+		public decimal? _BalancePeso { get; set; }
+		[NotMapped]
+		public decimal? _BalanceUsd { get; set; }
+		[NotMapped]
+		public decimal? _BalanceBtc { get; set; }
+		[NotMapped]
+		public string? _DireccionUUID { get; set; }
 	}
 }

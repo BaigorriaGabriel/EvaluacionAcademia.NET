@@ -18,7 +18,7 @@ namespace EvaluacionAcademia.NET.DataAccess.Repositories
 			return await _context.CriptoAccounts.Include(account => account.User).Where(account => account.IsActive == true).ToListAsync();
 		}
 
-		public async Task<float> GetBalance(int accountId)
+		public async Task<decimal> GetBalance(int accountId)
 		{
 			var account = await _context.Accounts.OfType<AccountCripto>().FirstOrDefaultAsync(a => a.CodAccount == accountId);
 
@@ -59,6 +59,13 @@ namespace EvaluacionAcademia.NET.DataAccess.Repositories
 
 			_context.CriptoAccounts.Update(account);
 			return true;
+		}
+
+		public async Task<AccountCripto> GetByUUID(string UUID)
+		{
+			var account = await _context.CriptoAccounts.FirstOrDefaultAsync(x => x.DirectionUUID == UUID);
+
+			return account;
 		}
 
 

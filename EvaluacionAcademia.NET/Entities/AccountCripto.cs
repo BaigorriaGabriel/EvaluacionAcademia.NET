@@ -42,8 +42,8 @@ namespace EvaluacionAcademia.NET.Entities
 		public string DirectionUUID { get; set; }
 
 		[Required]
-		[Column("balanceBtc")]
-		public float BalanceBtc { get; set; }
+		[Column("balanceBtc", TypeName = "decimal(18, 2)")]
+		public decimal BalanceBtc { get; set; }
 
 		// Propiedades específicas de las cuentas de criptomonedas
 

@@ -41,10 +41,14 @@ namespace EvaluacionAcademia.NET.Controllers
 		[Authorize]
 		public async Task<IActionResult> GetBalance(int idAccount) 
 		{
-			var saldo = await _unitOfWork.AccountCriptoRepository.GetBalance(idAccount);
+			var account= await _unitOfWork.AccountCriptoRepository.GetById(new AccountCripto(idAccount));
+			if(account != null && account.Type=="Cripto" && account.IsActive==true) 
+			{
+				var saldo = await _unitOfWork.AccountCriptoRepository.GetBalance(idAccount);
 
-			return ResponseFactory.CreateSuccessResponse(200, saldo);
-			//return Ok(saldo);
+				return ResponseFactory.CreateSuccessResponse(200, saldo);
+			}
+			return ResponseFactory.CreateErrorResponse(404, $"No existe ninguna cuenta cripto activa con el Id: {idAccount}");
 
 		}
 
@@ -53,30 +57,47 @@ namespace EvaluacionAcademia.NET.Controllers
 		[Authorize]
 		public async Task<IActionResult> Create(AccountCriptoDto dto)
 		{
-			if (await _unitOfWork.AccountCriptoRepository.AccountExByUUID(dto.DirectionUUID)) return ResponseFactory.CreateErrorResponse(409, $"Ya existe una cuetna registrada con la direccion Universally Unique Identifier: {dto.DirectionUUID}");
-			//if (dto.RoleId != 1 && dto.RoleId != 2) return ResponseFactory.CreateErrorResponse(409, $"RoleId Invalido");
-			var accountCripto = new AccountCripto(dto);
-			await _unitOfWork.AccountCriptoRepository.Insert(accountCripto);
-			await _unitOfWork.Complete();
+			if(await _unitOfWork.UserRepository.UserExById(dto.CodUser))
+			{
+
+				if (await _unitOfWork.AccountCriptoRepository.AccountExByUUID(dto.DirectionUUID)) return ResponseFactory.CreateErrorResponse(409, $"Ya existe una cuetna registrada con la direccion Universally Unique Identifier: {dto.DirectionUUID}");
+				//if (dto.RoleId != 1 && dto.RoleId != 2) return ResponseFactory.CreateErrorResponse(409, $"RoleId Invalido");
+				var accountCripto = new AccountCripto(dto);
+				await _unitOfWork.AccountCriptoRepository.Insert(accountCripto);
+				await _unitOfWork.Complete();
 
 
-			return ResponseFactory.CreateSuccessResponse(201, "Cuenta cripto registrada con exito!");
+				return ResponseFactory.CreateSuccessResponse(201, "Cuenta cripto registrada con exito!");
+			}
+			return ResponseFactory.CreateErrorResponse(404, $"No existe ningun Usuario con el Id: {dto.CodUser}");
 		}
 
 		[HttpPut("Update/{id}")]
 		[Authorize]
 		public async Task<IActionResult> Update([FromRoute] int id, AccountCriptoDto dto)
 		{
-			if (await _unitOfWork.AccountCriptoRepository.AccountExById(id))
+			if (await _unitOfWork.UserRepository.UserExById(dto.CodUser))
 			{
-				var existingAccount = await _unitOfWork.AccountCriptoRepository.GetById(new AccountCripto(id));
 
-				//if (dto.RoleId != 1 && dto.RoleId != 2) return ResponseFactory.CreateErrorResponse(409, $"RoleId Invalido");
-				var result = await _unitOfWork.AccountCriptoRepository.Update(new AccountCripto(dto, id));
-				await _unitOfWork.Complete();
-				return ResponseFactory.CreateSuccessResponse(201, "Cuenta cripto actualizada con exito!");
+				var existingAccount = await _unitOfWork.AccountCriptoRepository.GetByUUID(dto.DirectionUUID);
+
+				if (existingAccount != null && existingAccount.CodAccount != id)
+				{
+					return ResponseFactory.CreateErrorResponse(409, $"Ya existe una cuenta cripto registrada con la direccion Universally Unique Identifier: {dto.DirectionUUID}");
+				}
+
+				if (await _unitOfWork.AccountCriptoRepository.AccountExById(id))
+				{
+					existingAccount = await _unitOfWork.AccountCriptoRepository.GetById(new AccountCripto(id));
+
+					//if (dto.RoleId != 1 && dto.RoleId != 2) return ResponseFactory.CreateErrorResponse(409, $"RoleId Invalido");
+					var result = await _unitOfWork.AccountCriptoRepository.Update(new AccountCripto(dto, id));
+					await _unitOfWork.Complete();
+					return ResponseFactory.CreateSuccessResponse(201, "Cuenta cripto actualizada con exito!");
+				}
+				return ResponseFactory.CreateErrorResponse(404, $"No existe ninguna Cuenta cripto con el Id: {id}");
 			}
-			return ResponseFactory.CreateErrorResponse(404, $"No existe ninguna Cuenta cripto con el Id: {id}");
+			return ResponseFactory.CreateErrorResponse(404, $"No existe ningun Usuario con el Id: {dto.CodUser}");
 		}
 
 

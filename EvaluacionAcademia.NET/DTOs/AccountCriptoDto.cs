@@ -4,6 +4,6 @@
 	{
         public int CodUser { get; set; }
         public string DirectionUUID { get; set; }
-        public float BalanceBtc { get; set; }
+        public decimal BalanceBtc { get; set; }
     }
 }

@@ -18,7 +18,7 @@ namespace EvaluacionAcademia.NET.DataAccess.Repositories
 			return await _context.FiduciaryAccounts.Include(account => account.User).Where(account => account.IsActive == true).ToListAsync();
 		}
 
-		public async Task<float> GetBalancePeso(int accountId)
+		public async Task<decimal> GetBalancePeso(int accountId)
 		{
 			var account = await _context.Accounts.OfType<AccountFiduciary>().FirstOrDefaultAsync(a => a.CodAccount == accountId);
 
@@ -30,7 +30,7 @@ namespace EvaluacionAcademia.NET.DataAccess.Repositories
 			return 0;
 		}
 
-		public async Task<float> GetBalanceUsd(int accountId)
+		public async Task<decimal> GetBalanceUsd(int accountId)
 		{
 			var account = await _context.Accounts.OfType<AccountFiduciary>().FirstOrDefaultAsync(a => a.CodAccount == accountId);
 

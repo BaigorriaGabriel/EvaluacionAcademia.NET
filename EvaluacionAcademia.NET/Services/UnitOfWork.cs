@@ -11,6 +11,7 @@ namespace EvaluacionAcademia.NET.Services
 		public AccountCriptoRepository AccountCriptoRepository { get; private set; }
 		public UserRepository UserRepository { get; private set; }
 		public AccountRepository AccountRepository { get; private set; }
+		public TransactionRepository TransactionRepository { get; private set; }
 
 		public UnitOfWork(ApplicationDbContext context)
 		{
@@ -20,6 +21,7 @@ namespace EvaluacionAcademia.NET.Services
 			AccountCriptoRepository = new AccountCriptoRepository(_context);
 			UserRepository = new UserRepository(_context);
 			AccountRepository = new AccountRepository(_context);
+			TransactionRepository = new TransactionRepository(_context);
 		}
 		public Task<int> Complete()
 		{

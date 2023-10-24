@@ -4,6 +4,6 @@ namespace EvaluacionAcademia.NET.DataAccess.Repositories.Interfaces
 {
 	public interface IAccountCriptoRepository : IRepository<AccountCripto>
 	{
-		Task<float> GetBalance(int accountId);
+		Task<decimal> GetBalance(int accountId);
 	}
 }

@@ -12,6 +12,7 @@ namespace EvaluacionAcademia.NET.Services
 		public UserRepository UserRepository { get; }
 
 		public AccountRepository AccountRepository { get; }
+		public TransactionRepository TransactionRepository { get; }
 
 		Task<int> Complete();
 	}
