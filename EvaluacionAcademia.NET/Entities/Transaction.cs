@@ -30,6 +30,17 @@ namespace EvaluacionAcademia.NET.Entities
 		[Column("timestamp")]
 		public DateTime Timestamp { get; set; }
 
+		[NotMapped]
+		public string? _FromCurrency { get; set; }
+
+		[NotMapped]
+		public string? _ToCurrency { get; set; }
+		[NotMapped]
+		public int? _CodAccountReceiver { get; set; }
+
+		[NotMapped]
+		public string? _Currency { get; set; }
+
 
 	}
 }

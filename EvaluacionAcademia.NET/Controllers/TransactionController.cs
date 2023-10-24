@@ -19,6 +19,19 @@ namespace EvaluacionAcademia.NET.Controllers
 			_unitOfWork = unitOfWork;
 		}
 
+
+		[HttpGet("GetAll")]
+		[Authorize]
+		public async Task<IActionResult> GetAll()
+		{
+
+			var transactions = await _unitOfWork.TransactionRepository.GetAllActive();
+
+			return ResponseFactory.CreateSuccessResponse(200, transactions);
+
+		}
+
+
 		[HttpPost]
 		[Route("Deposit/{id}")]
 		[Authorize]

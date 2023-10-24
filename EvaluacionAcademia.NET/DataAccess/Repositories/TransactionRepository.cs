@@ -12,6 +12,27 @@ namespace EvaluacionAcademia.NET.DataAccess.Repositories
 
 		}
 
+		public override async Task<List<Transaction>> GetAllActive()
+		{
+			//return await _context.Accounts.Where(s => s.IsActive == true).ToListAsync();
+			var transactions = await _context.Transactions
+			.Select(a => new Transaction
+			{
+				CodTransaction = a.CodTransaction,
+				Type = a.Type,
+				CodAccountSender = a.CodAccountSender,
+				Amount = a.Amount,
+				Timestamp = a.Timestamp,
+				_FromCurrency = (a is TransactionConversion) ? ((TransactionConversion)a).FromCurrency : "",
+				_ToCurrency = (a is TransactionConversion) ? ((TransactionConversion)a).ToCurrency : "",
+				_CodAccountReceiver = (a is TransactionTransfer) ? ((TransactionTransfer)a).CodAccountReceiver : 0,
+				_Currency = (a is TransactionTransfer) ? ((TransactionTransfer)a).Currency : null
+			})
+			.ToListAsync();
+
+			return transactions;
+		}
+
 		public async Task<bool> Deposit(AccountFiduciary depositAccount, decimal amount)
 		{
 			var account = await _context.FiduciaryAccounts.FirstOrDefaultAsync(x => x.CodAccount == depositAccount.CodAccount);
