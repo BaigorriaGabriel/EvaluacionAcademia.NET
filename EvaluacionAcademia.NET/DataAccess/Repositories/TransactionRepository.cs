@@ -122,5 +122,39 @@ namespace EvaluacionAcademia.NET.DataAccess.Repositories
 			return true;
 
 		}
+
+		public async Task<bool> Convert(Account accountToUpdate, decimal amount, string currencyToCurrency)
+		{
+			var priceUsd = 1000;
+			Transaction transaction;
+			var account = await _context.FiduciaryAccounts.FirstOrDefaultAsync(x => x.CodAccount == accountToUpdate.CodAccount);
+
+			if (account == null)
+			{
+				return false;
+			}
+			if (currencyToCurrency == "PesoToUsd")
+			{
+				account.BalancePeso -= amount;
+				account.BalanceUsd += (amount / priceUsd);
+
+				transaction = new TransactionConversion
+				{
+					Type = "Conversion",
+					CodAccountSender = accountToUpdate.CodAccount,
+					Amount = amount,
+					FromCurrency = "Peso",
+					ToCurrency = "Usd",
+					Timestamp = DateTime.Now
+				};
+				_context.Transactions.Add(transaction);
+			}
+
+
+			await _context.SaveChangesAsync();
+
+			return true;
+
+		}
 	}
 }

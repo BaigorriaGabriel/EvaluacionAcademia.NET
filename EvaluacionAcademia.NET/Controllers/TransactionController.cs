@@ -116,5 +116,34 @@ namespace EvaluacionAcademia.NET.Controllers
 			return ResponseFactory.CreateErrorResponse(406, "debe ingresar un monto mayor a 0");
 
 		}
+
+
+		[HttpPost]
+		[Route("Convert/{id}")]
+		[Authorize]
+		public async Task<IActionResult> Convert([FromRoute] int id, TransactionConversionDto dto)
+		{
+			if (dto.Amount > 0)
+			{
+				if (dto.FromCurrency=="Peso" && dto.ToCurrency=="Usd")
+				{
+					var account = await _unitOfWork.AccountRepository.GetById(new Account(id));
+					if (account != null && account.Type == "Fiduciary" && account.IsActive == true)
+					{
+						var accountFiduciary = await _unitOfWork.AccountFiduciaryRepository.GetById(new AccountFiduciary(id));
+						if (accountFiduciary.BalancePeso < dto.Amount)
+							return ResponseFactory.CreateErrorResponse(400, "Saldo insuficiente");
+						var result = await _unitOfWork.TransactionRepository.Convert(accountFiduciary, dto.Amount, "PesoToUsd");
+						await _unitOfWork.Complete();
+						return ResponseFactory.CreateSuccessResponse(201, "Conversion realizada con exito!");
+					}
+
+					return ResponseFactory.CreateErrorResponse(404, $"No existe ninguna Cuenta fiduciaria activa con el Id: {id}");
+				}
+			}
+
+			return ResponseFactory.CreateErrorResponse(406, "debe ingresar un monto mayor a 0");
+
+		}
 	}
 }
