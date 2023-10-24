@@ -150,6 +150,23 @@ namespace EvaluacionAcademia.NET.DataAccess.Repositories
 				_context.Transactions.Add(transaction);
 			}
 
+			if (currencyToCurrency == "UsdToPeso")
+			{
+				account.BalanceUsd -= amount;
+				account.BalancePeso += (amount * priceUsd);
+
+				transaction = new TransactionConversion
+				{
+					Type = "Conversion",
+					CodAccountSender = accountToUpdate.CodAccount,
+					Amount = amount,
+					FromCurrency = "Usd",
+					ToCurrency = "Peso",
+					Timestamp = DateTime.Now
+				};
+				_context.Transactions.Add(transaction);
+			}
+
 
 			await _context.SaveChangesAsync();
 
