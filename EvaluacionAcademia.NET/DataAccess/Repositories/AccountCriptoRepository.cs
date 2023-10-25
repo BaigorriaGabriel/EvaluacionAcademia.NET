@@ -35,6 +35,11 @@ namespace EvaluacionAcademia.NET.DataAccess.Repositories
 			return await _context.CriptoAccounts.AnyAsync(x => x.DirectionUUID == UUID);
 		}
 
+		public async Task<bool> AccountExByUserId(int userId)
+		{
+			return await _context.CriptoAccounts.AnyAsync(x => x.CodUser == userId && x.IsActive == true);
+		}
+
 		public async Task<bool> AccountExById(int id)
 		{
 			return await _context.CriptoAccounts.AnyAsync(x => (x.CodAccount == id && x.Type== "Cripto"));

@@ -57,6 +57,11 @@ namespace EvaluacionAcademia.NET.DataAccess.Repositories
 			return await _context.FiduciaryAccounts.AnyAsync(x => (x.CodAccount == id && x.Type == "Fiduciary"));
 		}
 
+		public async Task<bool> AccountExByUserId(int userId)
+		{
+			return await _context.FiduciaryAccounts.AnyAsync(x => x.CodUser == userId && x.IsActive == true);
+		}
+
 		public override async Task<bool> Update(AccountFiduciary updateAccount)
 		{
 			var account = await _context.FiduciaryAccounts.FirstOrDefaultAsync(x => x.CodAccount == updateAccount.CodAccount);

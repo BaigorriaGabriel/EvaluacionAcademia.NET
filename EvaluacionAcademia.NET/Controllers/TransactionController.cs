@@ -149,9 +149,56 @@ namespace EvaluacionAcademia.NET.Controllers
 					if (account != null && account.Type == "Fiduciary" && account.IsActive == true)
 					{
 						var accountFiduciary = await _unitOfWork.AccountFiduciaryRepository.GetById(new AccountFiduciary(id));
+
 						if (accountFiduciary.BalanceUsd < dto.Amount)
 							return ResponseFactory.CreateErrorResponse(400, "Saldo insuficiente");
+
 						var result = await _unitOfWork.TransactionRepository.Convert(accountFiduciary, dto.Amount, "UsdToPeso");
+						await _unitOfWork.Complete();
+
+						return ResponseFactory.CreateSuccessResponse(201, "Conversion realizada con exito!");
+					}
+
+					return ResponseFactory.CreateErrorResponse(404, $"No existe ninguna Cuenta fiduciaria activa con el Id: {id}");
+				}
+
+				//de usd a btc
+				if (dto.FromCurrency == "Usd" && dto.ToCurrency == "Btc")
+				{
+					var account = await _unitOfWork.AccountRepository.GetById(new Account(id));
+					if (account != null && account.Type == "Fiduciary" && account.IsActive == true)
+					{
+						var accountFiduciary = await _unitOfWork.AccountFiduciaryRepository.GetById(new AccountFiduciary(id));
+
+						if (!await _unitOfWork.AccountCriptoRepository.AccountExByUserId(accountFiduciary.CodUser))
+							return ResponseFactory.CreateErrorResponse(404, $"No existe ninguna Cuenta cripto activa que le pertenezca al usuario de UserId: {accountFiduciary.CodUser}");
+
+						if (accountFiduciary.BalanceUsd < dto.Amount)
+							return ResponseFactory.CreateErrorResponse(400, "Saldo insuficiente");
+
+						var result = await _unitOfWork.TransactionRepository.Convert(accountFiduciary, dto.Amount, "UsdToBtc");
+						await _unitOfWork.Complete();
+						return ResponseFactory.CreateSuccessResponse(201, "Conversion realizada con exito!");
+					}
+
+					return ResponseFactory.CreateErrorResponse(404, $"No existe ninguna Cuenta fiduciaria activa con el Id: {id}");
+				}
+
+				//de btc a usd//REVISAR QUE SE DEBE CAMBIAR
+				if (dto.FromCurrency == "Btc" && dto.ToCurrency == "Usd")
+				{
+					var account = await _unitOfWork.AccountRepository.GetById(new Account(id));
+					if (account != null && account.Type == "Cripto" && account.IsActive == true)
+					{
+						var accountCripto = await _unitOfWork.AccountCriptoRepository.GetById(new AccountCripto(id));
+
+						if (!await _unitOfWork.AccountFiduciaryRepository.AccountExByUserId(accountCripto.CodUser))
+							return ResponseFactory.CreateErrorResponse(404, $"No existe ninguna Fiduciaria activa que le pertenezca al usuario de UserId: {accountCripto.CodUser}");
+
+						if (accountCripto.BalanceBtc < dto.Amount)
+							return ResponseFactory.CreateErrorResponse(400, "Saldo insuficiente");
+
+						var result = await _unitOfWork.TransactionRepository.Convert(accountCripto, dto.Amount, "BtcToUsd");
 						await _unitOfWork.Complete();
 						return ResponseFactory.CreateSuccessResponse(201, "Conversion realizada con exito!");
 					}

@@ -126,17 +126,20 @@ namespace EvaluacionAcademia.NET.DataAccess.Repositories
 		public async Task<bool> Convert(Account accountToUpdate, decimal amount, string currencyToCurrency)
 		{
 			var priceUsd = 1000;
+			var priceBtc = 12000;
 			Transaction transaction;
-			var account = await _context.FiduciaryAccounts.FirstOrDefaultAsync(x => x.CodAccount == accountToUpdate.CodAccount);
+			AccountFiduciary accountFiduciary;
+			AccountCripto accountCripto;
 
-			if (account == null)
-			{
-				return false;
-			}
 			if (currencyToCurrency == "PesoToUsd")
 			{
-				account.BalancePeso -= amount;
-				account.BalanceUsd += (amount / priceUsd);
+				accountFiduciary = await _context.FiduciaryAccounts.FirstOrDefaultAsync(x => x.CodAccount == accountToUpdate.CodAccount);
+				if (accountFiduciary == null)
+				{
+					return false;
+				}
+				accountFiduciary.BalancePeso -= amount;
+				accountFiduciary.BalanceUsd += (amount / priceUsd);
 
 				transaction = new TransactionConversion
 				{
@@ -152,8 +155,13 @@ namespace EvaluacionAcademia.NET.DataAccess.Repositories
 
 			if (currencyToCurrency == "UsdToPeso")
 			{
-				account.BalanceUsd -= amount;
-				account.BalancePeso += (amount * priceUsd);
+				accountFiduciary = await _context.FiduciaryAccounts.FirstOrDefaultAsync(x => x.CodAccount == accountToUpdate.CodAccount);
+				if (accountFiduciary == null)
+				{
+					return false;
+				}
+				accountFiduciary.BalanceUsd -= amount;
+				accountFiduciary.BalancePeso += (amount * priceUsd);
 
 				transaction = new TransactionConversion
 				{
@@ -162,6 +170,52 @@ namespace EvaluacionAcademia.NET.DataAccess.Repositories
 					Amount = amount,
 					FromCurrency = "Usd",
 					ToCurrency = "Peso",
+					Timestamp = DateTime.Now
+				};
+				_context.Transactions.Add(transaction);
+			}
+
+			if (currencyToCurrency == "UsdToBtc")
+			{
+				accountFiduciary = await _context.FiduciaryAccounts.FirstOrDefaultAsync(x => x.CodAccount == accountToUpdate.CodAccount);
+				accountCripto= await _context.CriptoAccounts.FirstOrDefaultAsync(x => x.CodUser == accountToUpdate.CodUser);
+				if (accountFiduciary == null || accountCripto == null)
+				{
+					return false;
+				}
+				accountFiduciary.BalanceUsd -= amount;
+				accountCripto.BalanceBtc += (amount / priceBtc);
+
+				transaction = new TransactionConversion
+				{
+					Type = "Conversion",
+					CodAccountSender = accountToUpdate.CodAccount,
+					Amount = amount,
+					FromCurrency = "Usd",
+					ToCurrency = "Btc",
+					Timestamp = DateTime.Now
+				};
+				_context.Transactions.Add(transaction);
+			}
+
+			if (currencyToCurrency == "BtcToUsd")
+			{
+				accountFiduciary = await _context.FiduciaryAccounts.FirstOrDefaultAsync(x => x.CodUser == accountToUpdate.CodUser);
+				accountCripto = await _context.CriptoAccounts.FirstOrDefaultAsync(x => x.CodAccount == accountToUpdate.CodAccount);
+				if (accountFiduciary == null || accountCripto == null)
+				{
+					return false;
+				}
+				accountFiduciary.BalanceUsd += (amount * priceBtc);
+				accountCripto.BalanceBtc -= amount;
+
+				transaction = new TransactionConversion
+				{
+					Type = "Conversion",
+					CodAccountSender = accountToUpdate.CodAccount,
+					Amount = amount,
+					FromCurrency = "Btc",
+					ToCurrency = "Usd",
 					Timestamp = DateTime.Now
 				};
 				_context.Transactions.Add(transaction);
