@@ -44,13 +44,12 @@ namespace EvaluacionAcademia.NET.Controllers
 				{ 
 					var accountFiduciary = await _unitOfWork.AccountFiduciaryRepository.GetById(new AccountFiduciary(id)); 
 					var result = await _unitOfWork.TransactionRepository.Deposit(accountFiduciary, dto.Amount);
+
 					await _unitOfWork.Complete();
 					return ResponseFactory.CreateSuccessResponse(201, "Deposito realizado con exito!");
 				}
-			
 				return ResponseFactory.CreateErrorResponse(404, $"No existe ninguna Cuenta fiduciaria activa con el Id: {id}");
 			}
-
 			return ResponseFactory.CreateErrorResponse(406, "debe ingresar un monto mayor a 0");
 
 		}
@@ -86,7 +85,9 @@ namespace EvaluacionAcademia.NET.Controllers
 
 					var result = await _unitOfWork.TransactionRepository.TransferFiduciary(accountSenderFiduciary, accountReceiverFiduciary, dto);
 					await _unitOfWork.Complete();
+
 					if(result) return ResponseFactory.CreateSuccessResponse(201, "Transferencia realizada con exito!");
+
 					else ResponseFactory.CreateErrorResponse(400, "error al intentar transferir");
 				}
 
@@ -95,6 +96,7 @@ namespace EvaluacionAcademia.NET.Controllers
 					//cuenta Sender
 					accountSender = await _unitOfWork.AccountRepository.GetById(new Account(idSender));
 					if (accountSender == null || accountSender.Type != "Cripto" || accountSender.IsActive != true) { return ResponseFactory.CreateErrorResponse(404, $"No existe ninguna Cuenta Cripto activa con el Id: {idSender}"); }
+					
 					//cuenta Receiver
 					accountReceiver = await _unitOfWork.AccountRepository.GetById(new Account(idReceiver));
 					if (accountReceiver == null || accountReceiver.Type != "Cripto" || accountReceiver.IsActive != true) { return ResponseFactory.CreateErrorResponse(404, $"No existe ninguna Cuenta Cripto activa con el Id: {idReceiver}"); }
@@ -132,8 +134,10 @@ namespace EvaluacionAcademia.NET.Controllers
 					if (account != null && account.Type == "Fiduciary" && account.IsActive == true)
 					{
 						var accountFiduciary = await _unitOfWork.AccountFiduciaryRepository.GetById(new AccountFiduciary(id));
+
 						if (accountFiduciary.BalancePeso < dto.Amount)
 							return ResponseFactory.CreateErrorResponse(400, "Saldo insuficiente");
+
 						var result = await _unitOfWork.TransactionRepository.Convert(accountFiduciary, dto.Amount, "PesoToUsd");
 						await _unitOfWork.Complete();
 						return ResponseFactory.CreateSuccessResponse(201, "Conversion realizada con exito!");
@@ -184,7 +188,7 @@ namespace EvaluacionAcademia.NET.Controllers
 					return ResponseFactory.CreateErrorResponse(404, $"No existe ninguna Cuenta fiduciaria activa con el Id: {id}");
 				}
 
-				//de btc a usd//REVISAR QUE SE DEBE CAMBIAR
+				//de btc a usd
 				if (dto.FromCurrency == "Btc" && dto.ToCurrency == "Usd")
 				{
 					var account = await _unitOfWork.AccountRepository.GetById(new Account(id));
@@ -202,10 +206,8 @@ namespace EvaluacionAcademia.NET.Controllers
 						await _unitOfWork.Complete();
 						return ResponseFactory.CreateSuccessResponse(201, "Conversion realizada con exito!");
 					}
-
 					return ResponseFactory.CreateErrorResponse(404, $"No existe ninguna Cuenta fiduciaria activa con el Id: {id}");
 				}
-
 			}
 
 			return ResponseFactory.CreateErrorResponse(406, "debe ingresar un monto mayor a 0");

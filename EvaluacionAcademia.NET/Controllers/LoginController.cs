@@ -33,6 +33,7 @@ namespace EvaluacionAcademia.NET.Controllers
 
 			var user = new UserLoginDto()
 			{
+				CodeUser = userCredentials.CodUser,
 				Name = userCredentials.Name,
 				Email = userCredentials.Email,
 				Dni = userCredentials.Dni,

@@ -15,7 +15,17 @@ namespace EvaluacionAcademia.NET
 		{
 			var builder = WebApplication.CreateBuilder(args);
 
+			var AllowEspecificOrigins = "";
+
 			// Add services to the container.
+
+			builder.Services.AddCors(options =>
+			{
+				options.AddPolicy(name: AllowEspecificOrigins, policy =>
+				{
+					policy.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+				});
+			});
 
 			builder.Services.AddControllers();
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -83,6 +93,7 @@ namespace EvaluacionAcademia.NET
 
 			app.UseAuthorization();
 
+			app.UseCors(AllowEspecificOrigins);
 
 			app.MapControllers();
 
