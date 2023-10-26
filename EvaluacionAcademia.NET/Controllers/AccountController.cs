@@ -17,26 +17,27 @@ namespace EvaluacionAcademia.NET.Controllers
 			_unitOfWork = unitOfWork;
 		}
 
-		[HttpGet("GetAllActive")]
+        /// <summary>
+        /// Obtiene todas las cuentas
+        /// </summary>
+        /// <returns>Status 200 mas listado de cuentas</returns>
+        [HttpGet("GetAllActive")]
 		[Authorize]
-		public async Task<IActionResult> GetAllActive() //(int pageToShow = 1)
+		public async Task<IActionResult> GetAllActive() 
 		{
-			//int pageToShow = 1;
-
 			var acounts = await _unitOfWork.AccountRepository.GetAllActive();
 
-			//if (Request.Query.ContainsKey("page")) { int.TryParse(Request.Query["page"], out pageToShow); }
-
-			//var url = new Uri($"{Request.Scheme}://{Request.Host}{Request.Path}").ToString();
-
-			//var paginateUsers = PaginateHelper.Paginate(users, pageToShow, url);
-
-			//return ResponseFactory.CreateSuccessResponse(200, paginateUsers);
 			return ResponseFactory.CreateSuccessResponse(200, acounts);
 
 		}
 
-		[HttpGet("GetAccountByType")]
+        /// <summary>
+        /// Obtiene cuenta segun codigo de usuario y tipo de cuenta
+        /// </summary>
+        /// <param name="codUser"></param>
+        /// <param name="type"></param>
+        /// <returns>Status 200 mas cuenta</returns>
+        [HttpGet("GetAccountByType")]
 		[Authorize]
 		public async Task<IActionResult> GetAccountByType(int codUser, int type)
 		{
@@ -54,7 +55,13 @@ namespace EvaluacionAcademia.NET.Controllers
 			return ResponseFactory.CreateErrorResponse(404, $"No existe ningun usuario con el Id: {codUser}");
 		}
 
-		[HttpDelete("Delete/{id}")]
+
+        /// <summary>
+        /// Eliminacion logica de cuenta
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Status 200 mas mensaje de confirmacion</returns>
+        [HttpDelete("Delete/{id}")]
 		[Authorize]
 		public async Task<IActionResult> Delete([FromRoute] int id)
 		{

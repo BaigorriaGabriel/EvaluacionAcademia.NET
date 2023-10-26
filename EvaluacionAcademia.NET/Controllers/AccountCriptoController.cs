@@ -18,26 +18,27 @@ namespace EvaluacionAcademia.NET.Controllers
 			_unitOfWork = unitOfWork;
 		}
 
+
+		/// <summary>
+		/// Obtiene todas las cuentas de tipo cripto
+		/// </summary>
+		/// <returns>Status 200 mas Listado de cuentas Cripto</returns>
 		[HttpGet("GetAllActive")]
 		[Authorize]
 		public async Task<IActionResult> GetAllActive() //(int pageToShow = 1)
 		{
-			//int pageToShow = 1;
-
 			var acounts = await _unitOfWork.AccountCriptoRepository.GetAllActive();
 
-			//if (Request.Query.ContainsKey("page")) { int.TryParse(Request.Query["page"], out pageToShow); }
-
-			//var url = new Uri($"{Request.Scheme}://{Request.Host}{Request.Path}").ToString();
-
-			//var paginateUsers = PaginateHelper.Paginate(users, pageToShow, url);
-
-			//return ResponseFactory.CreateSuccessResponse(200, paginateUsers);
 			return ResponseFactory.CreateSuccessResponse(200, acounts);
-
 		}
 
-		[HttpGet("GetBalance")]
+
+        /// <summary>
+        /// Obtiene el saldo de cuenta
+        /// </summary>
+        /// <param name="idAccount"></param>
+        /// <returns>Status 200 mas Saldo</returns>
+        [HttpGet("GetBalance")]
 		[Authorize]
 		public async Task<IActionResult> GetBalance(int idAccount) 
 		{
@@ -52,27 +53,44 @@ namespace EvaluacionAcademia.NET.Controllers
 
 		}
 
-		[HttpPost]
+
+        /// <summary>
+        /// Creacion de cuenta cripto
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns>Status 200 mas mensaje de confirmacion</returns>
+        [HttpPost]
 		[Route("Create")]
 		[Authorize]
 		public async Task<IActionResult> Create(AccountCriptoDto dto)
 		{
-			if(await _unitOfWork.UserRepository.UserExById(dto.CodUser))
+			if (!await _unitOfWork.AccountCriptoRepository.AccountExByUserId(dto.CodUser))
 			{
+				if (await _unitOfWork.UserRepository.UserExById(dto.CodUser))
+				{
 
-				if (await _unitOfWork.AccountCriptoRepository.AccountExByUUID(dto.DirectionUUID)) return ResponseFactory.CreateErrorResponse(409, $"Ya existe una cuetna registrada con la direccion Universally Unique Identifier: {dto.DirectionUUID}");
-				//if (dto.RoleId != 1 && dto.RoleId != 2) return ResponseFactory.CreateErrorResponse(409, $"RoleId Invalido");
-				var accountCripto = new AccountCripto(dto);
-				await _unitOfWork.AccountCriptoRepository.Insert(accountCripto);
-				await _unitOfWork.Complete();
+					if (await _unitOfWork.AccountCriptoRepository.AccountExByUUID(dto.DirectionUUID)) return ResponseFactory.CreateErrorResponse(409, $"Ya existe una cuetna registrada con la direccion Universally Unique Identifier: {dto.DirectionUUID}");
+					//if (dto.RoleId != 1 && dto.RoleId != 2) return ResponseFactory.CreateErrorResponse(409, $"RoleId Invalido");
+					var accountCripto = new AccountCripto(dto);
+					await _unitOfWork.AccountCriptoRepository.Insert(accountCripto);
+					await _unitOfWork.Complete();
 
 
-				return ResponseFactory.CreateSuccessResponse(201, "Cuenta cripto registrada con exito!");
+					return ResponseFactory.CreateSuccessResponse(201, "Cuenta cripto registrada con exito!");
+				}
+				return ResponseFactory.CreateErrorResponse(404, $"No existe ningun Usuario con el Id: {dto.CodUser}");
 			}
-			return ResponseFactory.CreateErrorResponse(404, $"No existe ningun Usuario con el Id: {dto.CodUser}");
-		}
+            return ResponseFactory.CreateErrorResponse(406, $"Ya existe una cuenta Fiduciaria del Usuario con el Id: {dto.CodUser}");
+        }
 
-		[HttpPut("Update/{id}")]
+
+        /// <summary>
+        /// Actualiza cuenta cripto
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="dto"></param>
+        /// <returns>Status 200 mas mensaje de confirmacion</returns>
+        [HttpPut("Update/{id}")]
 		[Authorize]
 		public async Task<IActionResult> Update([FromRoute] int id, AccountCriptoDto dto)
 		{

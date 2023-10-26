@@ -18,26 +18,29 @@ namespace EvaluacionAcademia.NET.Controllers
 			_unitOfWork = unitOfWork;
 		}
 
-		[HttpGet("GetAllActive")]
+
+        /// <summary>
+        /// Obtiene todas las cuentas de tipo fiduciaria
+        /// </summary>
+        /// <returns>Status 200 mas listado de cuentas</returns>
+        [HttpGet("GetAllActive")]
 		[Authorize]
-		public async Task<IActionResult> GetAllActive() //(int pageToShow = 1)
+		public async Task<IActionResult> GetAllActive()
 		{
-			//int pageToShow = 1;
 
 			var acounts = await _unitOfWork.AccountFiduciaryRepository.GetAllActive();
 
-			//if (Request.Query.ContainsKey("page")) { int.TryParse(Request.Query["page"], out pageToShow); }
-
-			//var url = new Uri($"{Request.Scheme}://{Request.Host}{Request.Path}").ToString();
-
-			//var paginateUsers = PaginateHelper.Paginate(users, pageToShow, url);
-
-			//return ResponseFactory.CreateSuccessResponse(200, paginateUsers);
 			return ResponseFactory.CreateSuccessResponse(200, acounts);
 
 		}
 
-		[HttpGet("GetBalancePeso")]
+
+        /// <summary>
+        /// Obtiene el saldo de Pesos en cuenta
+        /// </summary>
+        /// <param name="idAccount"></param>
+        /// <returns>Status 200 mas saldo</returns>
+        [HttpGet("GetBalancePeso")]
 		[Authorize]
 		public async Task<IActionResult> GetBalancePeso(int idAccount) 
 		{
@@ -52,7 +55,12 @@ namespace EvaluacionAcademia.NET.Controllers
 
 		}
 
-		[HttpGet("GetBalanceUsd")]
+        /// <summary>
+        /// Obtiene el saldo de Dolares en cuenta
+        /// </summary>
+        /// <param name="idAccount"></param>
+        /// <returns>Status 200 mas saldo</returns>
+        [HttpGet("GetBalanceUsd")]
 		[Authorize]
 		public async Task<IActionResult> GetBalanceUsd(int idAccount)
 		{
@@ -67,28 +75,45 @@ namespace EvaluacionAcademia.NET.Controllers
 
 		}
 
-		[HttpPost]
+
+		/// <summary>
+		/// Creacion de cuenta Fiduciaria
+		/// </summary>
+		/// <param name="dto"></param>
+		/// <returns>Status 200 mas mensaje de confrmacion</returns>
+        [HttpPost]
 		[Route("Create")]
 		[Authorize]
 		public async Task<IActionResult> Create(AccountFiduciaryDto dto)
 		{
-			if (await _unitOfWork.UserRepository.UserExById(dto.CodUser))
+			if(!await _unitOfWork.AccountFiduciaryRepository.AccountExByUserId(dto.CodUser))
 			{
+				if (await _unitOfWork.UserRepository.UserExById(dto.CodUser))
+				{
 
-				if (await _unitOfWork.AccountFiduciaryRepository.AccountExByCBU(dto.CBU)) return ResponseFactory.CreateErrorResponse(409, $"Ya existe una cuetna registrada con el CBU: {dto.CBU}");
-				if (await _unitOfWork.AccountFiduciaryRepository.AccountExByAlias(dto.Alias)) return ResponseFactory.CreateErrorResponse(409, $"Ya existe una cuetna registrada con el Alias: {dto.Alias}");
-				//if (dto.RoleId != 1 && dto.RoleId != 2) return ResponseFactory.CreateErrorResponse(409, $"RoleId Invalido");
-				var accountFiduciary = new AccountFiduciary(dto);
-				await _unitOfWork.AccountFiduciaryRepository.Insert(accountFiduciary);
-				await _unitOfWork.Complete();
+					if (await _unitOfWork.AccountFiduciaryRepository.AccountExByCBU(dto.CBU)) return ResponseFactory.CreateErrorResponse(409, $"Ya existe una cuetna registrada con el CBU: {dto.CBU}");
+					if (await _unitOfWork.AccountFiduciaryRepository.AccountExByAlias(dto.Alias)) return ResponseFactory.CreateErrorResponse(409, $"Ya existe una cuetna registrada con el Alias: {dto.Alias}");
+					//if (dto.RoleId != 1 && dto.RoleId != 2) return ResponseFactory.CreateErrorResponse(409, $"RoleId Invalido");
+					var accountFiduciary = new AccountFiduciary(dto);
+					await _unitOfWork.AccountFiduciaryRepository.Insert(accountFiduciary);
+					await _unitOfWork.Complete();
 
 
-				return ResponseFactory.CreateSuccessResponse(201, "Cuenta fiduciaria registrada con exito!");
+					return ResponseFactory.CreateSuccessResponse(201, "Cuenta fiduciaria registrada con exito!");
+				}
+				return ResponseFactory.CreateErrorResponse(404, $"No existe ningun Usuario con el Id: {dto.CodUser}");
 			}
-			return ResponseFactory.CreateErrorResponse(404, $"No existe ningun Usuario con el Id: {dto.CodUser}");
-		}
+            return ResponseFactory.CreateErrorResponse(406, $"Ya existe una cuenta Fiduciaria del Usuario con el Id: {dto.CodUser}");
+        }
 
-		[HttpPut("Update/{id}")]
+
+        /// <summary>
+        /// Actualiza cuenta fiduciaria
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="dto"></param>
+        /// <returns>Status 200 mas mensaje de confirmacion</returns>
+        [HttpPut("Update/{id}")]
 		[Authorize]
 		public async Task<IActionResult> Update([FromRoute] int id, AccountFiduciaryDto dto)
 		{

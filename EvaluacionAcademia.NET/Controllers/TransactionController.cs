@@ -19,8 +19,11 @@ namespace EvaluacionAcademia.NET.Controllers
 			_unitOfWork = unitOfWork;
 		}
 
-
-		[HttpGet("GetAll")]
+        /// <summary>
+        /// Obtiene todas las transacciones 
+        /// </summary>
+        /// <returns>Status 200 mas listado de transacciones</returns>
+        [HttpGet("GetAll")]
 		[Authorize]
 		public async Task<IActionResult> GetAll()
 		{
@@ -32,7 +35,13 @@ namespace EvaluacionAcademia.NET.Controllers
 		}
 
 
-		[HttpPost]
+        /// <summary>
+        /// Deposito en pesos a cuenta fiduciaria
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="dto"></param>
+        /// <returns>Status 200 mas mensaje de confirmacion</returns>
+        [HttpPost]
 		[Route("Deposit/{id}")]
 		[Authorize]
 		public async Task<IActionResult> Deposit([FromRoute]int id, TransactionDepositDto dto)
@@ -54,7 +63,46 @@ namespace EvaluacionAcademia.NET.Controllers
 
 		}
 
-		[HttpPost]
+        /// <summary>
+        /// Retiro en pesos o dolares de cuenta fiduciaria
+        /// </summary>
+        /// <param name="idAccount"></param>
+        /// <param name="dto"></param>
+        /// <returns>Status 200 mas mensaje de confirmacion</returns>
+        [HttpPost]
+        [Route("Withdrawal/{idAccount}")]
+        [Authorize]
+        public async Task<IActionResult> Withdrawal([FromRoute] int idAccount, TransactionWithdrawalDto dto)
+        {
+            if (dto.Amount > 0)
+            {
+                var account = await _unitOfWork.AccountFiduciaryRepository.GetById(new AccountFiduciary(idAccount));
+
+				if((dto.Currency=="Peso" && dto.Amount>account.BalancePeso) || (dto.Currency == "Usd" && dto.Amount > account.BalanceUsd))
+					return ResponseFactory.CreateErrorResponse(406, "Saldo insufuciente");
+
+                if (account != null && account.Type == "Fiduciary" && account.IsActive == true)
+                {
+                    var accountFiduciary = await _unitOfWork.AccountFiduciaryRepository.GetById(new AccountFiduciary(idAccount));
+                    var result = await _unitOfWork.TransactionRepository.Withdrawal(accountFiduciary, dto);
+
+                    await _unitOfWork.Complete();
+                    return ResponseFactory.CreateSuccessResponse(201, "Retiro realizado con exito!");
+                }
+                return ResponseFactory.CreateErrorResponse(404, $"No existe ninguna Cuenta fiduciaria activa con el Id: {idAccount}");
+            }
+            return ResponseFactory.CreateErrorResponse(406, "debe ingresar un monto mayor a 0");
+
+        }
+
+        /// <summary>
+        /// Transferencia de una cuenta a otra del mismo tipo
+        /// </summary>
+        /// <param name="idSender"></param>
+        /// <param name="idReceiver"></param>
+        /// <param name="dto"></param>
+        /// <returns>Status 200 mas mensaje de confirmacion</returns>
+        [HttpPost]
 		[Route("Transfer/{idSender}/{idReceiver}")]
 		[Authorize]
 		public async Task<IActionResult> Transfer([FromRoute] int idSender, [FromRoute] int idReceiver, TransactionTransferDto dto)
@@ -120,7 +168,13 @@ namespace EvaluacionAcademia.NET.Controllers
 		}
 
 
-		[HttpPost]
+        /// <summary>
+        /// Conversion de monedas
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="dto"></param>
+        /// <returns>Status 200 mas mensaje de confirmacion</returns>
+        [HttpPost]
 		[Route("Convert/{id}")]
 		[Authorize]
 		public async Task<IActionResult> Convert([FromRoute] int id, TransactionConversionDto dto)

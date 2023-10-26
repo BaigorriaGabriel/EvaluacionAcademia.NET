@@ -18,26 +18,26 @@ namespace EvaluacionAcademia.NET.Controllers
 			_unitOfWork = unitOfWork;
 		}
 
-		[HttpGet("GetAllActive")]
+        /// <summary>
+        /// Devuelve todos los usuarios
+        /// </summary>
+        /// <returns>Status 200 mas listado de usuarios</returns>
+        [HttpGet("GetAllActive")]
 		[Authorize]
-		public async Task<IActionResult> GetAllActive() //(int pageToShow = 1)
+		public async Task<IActionResult> GetAllActive() 
 		{
-			//int pageToShow = 1;
-
 			var users = await _unitOfWork.UserRepository.GetAllActive();
 
-			//if (Request.Query.ContainsKey("page")) { int.TryParse(Request.Query["page"], out pageToShow); }
-
-			//var url = new Uri($"{Request.Scheme}://{Request.Host}{Request.Path}").ToString();
-
-			//var paginateUsers = PaginateHelper.Paginate(users, pageToShow, url);
-
-			//return ResponseFactory.CreateSuccessResponse(200, paginateUsers);
 			return ResponseFactory.CreateSuccessResponse(200, users);
 
 		}
 
-		[HttpPost]
+        /// <summary>
+        /// Creacion de usuario
+        /// </summary>
+        /// <param name="dto"></param>
+        /// <returns>Status 200 mas mensaje de confirmacion</returns>
+        [HttpPost]
 		[Route("Register")]
 		[Authorize]
 		public async Task<IActionResult> Register(RegisterDto dto)
@@ -52,7 +52,13 @@ namespace EvaluacionAcademia.NET.Controllers
 			return ResponseFactory.CreateSuccessResponse(201, "Usuario registrado con exito!");
 		}
 
-		[HttpPut("Update/{id}")]
+        /// <summary>
+        /// Actualizacion de usuario
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="dto"></param>
+        /// <returns>Status 200 mas mensaje de confirmacion</returns>
+        [HttpPut("Update/{id}")]
 		[Authorize]
 		public async Task<IActionResult> Update([FromRoute] int id, RegisterDto dto)
 		{
@@ -66,6 +72,12 @@ namespace EvaluacionAcademia.NET.Controllers
 						return ResponseFactory.CreateErrorResponse(409, $"Ya existe un usuario registrado con el mail: {dto.Email}");
 					}
 				}
+				var userPassword = await _unitOfWork.UserRepository.GetById(new User(id));
+
+                if (dto.Password== userPassword.Password)
+				{
+
+				}
 				var result = await _unitOfWork.UserRepository.Update(new User(dto, id));
 				await _unitOfWork.Complete();
 				return ResponseFactory.CreateSuccessResponse(201, "Usuario actualizado con exito!");
@@ -73,7 +85,13 @@ namespace EvaluacionAcademia.NET.Controllers
 			return ResponseFactory.CreateErrorResponse(404, $"No existe ningun usuario con el ID: {id}");
 		}
 
-		[HttpDelete("Delete/{id}")]
+
+        /// <summary>
+        /// Eliminacion logica de usuario
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Status 200 mas mensaje de confirmacion</returns>
+        [HttpDelete("Delete/{id}")]
 		[Authorize]
 		public async Task<IActionResult> Delete([FromRoute] int id)
 		{

@@ -42,7 +42,20 @@ namespace EvaluacionAcademia.NET.DataAccess.Repositories
 			return 0;
 		}
 
-		public async Task<bool> AccountExByCBU(string CBU)
+        public async Task<Account> GetByIdUser(int userId)
+        {
+            var account = await _context.Accounts.OfType<AccountFiduciary>().FirstOrDefaultAsync(a => a.CodUser == userId);
+
+            if (account != null)
+            {
+                return account;
+            }
+
+            return null;
+        }
+
+
+        public async Task<bool> AccountExByCBU(string CBU)
 		{
 			return await _context.FiduciaryAccounts.AnyAsync(x => x.CBU == CBU);
 		}

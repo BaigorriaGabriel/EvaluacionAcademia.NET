@@ -59,7 +59,55 @@ namespace EvaluacionAcademia.NET.DataAccess.Repositories
 
 		}
 
-		public async Task<bool> TransferFiduciary(AccountFiduciary accountSender, AccountFiduciary accountReceiver, TransactionTransferDto dto)
+        public async Task<bool> Withdrawal(AccountFiduciary withdrawalAccount, TransactionWithdrawalDto dto)
+        {
+            var account = await _context.FiduciaryAccounts.FirstOrDefaultAsync(x => x.CodAccount == withdrawalAccount.CodAccount);
+
+            if (account == null)
+            {
+                return false;
+            }
+
+			if (dto.Currency == "Peso")
+			{
+
+				account.BalancePeso -= dto.Amount;
+
+				Transaction transaction = new TransactionTransfer
+                {
+					Type = "Withdrawal",
+					CodAccountSender = withdrawalAccount.CodAccount,
+					Amount = dto.Amount,
+                    Currency = dto.Currency,
+                    Timestamp = DateTime.Now
+				};
+                _context.Transactions.Add(transaction);
+            }
+
+            if (dto.Currency == "Usd")
+            {
+
+                account.BalanceUsd -= dto.Amount;
+
+                Transaction transaction = new TransactionTransfer
+                {
+                    Type = "Withdrawal",
+                    CodAccountSender = withdrawalAccount.CodAccount,
+                    Amount = dto.Amount,
+                    Currency = dto.Currency,
+                    Timestamp = DateTime.Now
+                };
+				_context.Transactions.Add(transaction);
+            }
+
+
+            await _context.SaveChangesAsync();
+
+            return true;
+
+        }
+
+        public async Task<bool> TransferFiduciary(AccountFiduciary accountSender, AccountFiduciary accountReceiver, TransactionTransferDto dto)
 		{
 			if(dto.Currency=="Peso" || dto.Currency == "Usd")
 			{
