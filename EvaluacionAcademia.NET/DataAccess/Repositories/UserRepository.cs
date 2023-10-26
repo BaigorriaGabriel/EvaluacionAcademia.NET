@@ -16,8 +16,6 @@ namespace EvaluacionAcademia.NET.DataAccess.Repositories
 
 		public async Task<User?> AuthenticateCredentials(AuthenticateDto dto)
 		{
-			//return await _context.Users.Include(x => x.Role).SingleOrDefaultAsync(x => (x.Email == dto.Email && x.Password == PasswordEncryptHelper.EncryptPassword(dto.Password, dto.Email)) && x.IsActive == true);
-			//return await _context.Users.SingleOrDefaultAsync(x => (x.Email == dto.Email && x.Password == dto.Password) && x.IsActive == true);
 			return await _context.Users.SingleOrDefaultAsync(x => (x.Email == dto.Email && x.Password == PasswordEncryptHelper.EncryptPassword(dto.Password, dto.Email)) && x.IsActive == true);
 		}
 
@@ -57,7 +55,6 @@ namespace EvaluacionAcademia.NET.DataAccess.Repositories
 			user.Name = updateUser.Name;
 			user.Dni = updateUser.Dni;
 			user.Email = updateUser.Email;
-			//user.RoleId = updateUser.RoleId;
 			user.Password = updateUser.Password;
 			user.IsActive = true;
 

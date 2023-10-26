@@ -12,6 +12,7 @@ namespace EvaluacionAcademia.NET.DataAccess.Repositories
 
 		}
 
+
 		public override async Task<List<AccountFiduciary>> GetAllActive()
 		{
 			//return await _context.FiduciaryAccounts.Where(s => s.IsActive == true).ToListAsync();
